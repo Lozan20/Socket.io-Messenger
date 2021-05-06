@@ -5,10 +5,7 @@ pipeline {
 
 	stages{
 		stage('Build') {
-			steps{
-				script{
-					LAST_STAGE_NAME = env.STAGE_NAME
-				}
+			steps{ 
 				echo 'Building...'
 				sh 'npm installl'
 			}
@@ -26,14 +23,14 @@ pipeline {
             		steps {
                 		echo 'Deploying....'
             		}
-        }
+        	}
 	}
 	post{
 		failure{
 			emailext attachLog: true,
 				body: "Jenkins ${last_stage_name} ended with status: ${currentBuild.currentResult} of job ${env.JOB_NAME}",
                 		to: 'szymonxlorenc@gmail.com',
-				subject: "${env.JOB_NAME} -> ${LAST_STAGE_NAME}: ${currentBuild.currentResult}"
+				subject: "${env.JOB_NAME} -> ${env.STAGE_NAME}: ${currentBuild.currentResult}"
 		}
 		success{
 			emailext attachLog: true,
