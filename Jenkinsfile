@@ -7,13 +7,14 @@ pipeline {
 		stage('Build'){
 			steps{
 				echo 'Building...'
-				sh 'printenv'
+				last_stage_name = env.STAGE_NAME
 				sh 'npm install'
 			}
 		}
 		stage('Test'){
 			steps{
 				echo 'Testing...'
+				last_stage_name = env.STAGE_NAME
 				sh 'npm run test'
 			}
 		}
@@ -21,15 +22,15 @@ pipeline {
 	post{
 		failure{
 			emailext attachLog: true,
-				body: "${currentBuild.currentResult}: Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}",
+				body: "Jenkins ${last_stage_name} ended with status: ${currentBuild.currentResult} of job ${env.JOB_NAME}",
                 		to: 'szymonxlorenc@gmail.com',
-                		subject: "Jenkins build failed ${currentBuild.currentResult}: Job ${env.JOB_NAME}"
+				subject: "${env.JOB_NAME} -> ${last_stage_name}: ${currentBuild.currentResult}"
 		}
 		success{
 			emailext attachLog: true,
-                		body: "${currentBuild.currentResult}: Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}",
+                		body: "Jenkins builded and tested with status: ${currentBuild.currentResult} of job ${env.JOB_NAME}",
                 		to: 'szymonxlorenc@gmail.com',
-                		subject: "Jenkins build succeed ${currentBuild.currentResult}: Job ${env.JOB_NAME}"
+				subject: "${env.JOB_NAME}: ${currentBuild.currentResult}"
 		}		
 	}
 }
