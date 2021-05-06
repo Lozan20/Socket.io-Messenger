@@ -4,25 +4,29 @@ pipeline {
 	tools {nodejs "node" }
 
 	stages{
-		stage('Build'){
+		stage('Build') {
 			steps{
 				script{
-					echo 'Building...'
 					LAST_STAGE_NAME = env.STAGE_NAME
-					sh 'npm installl'
 				}
-				
+				echo 'Building...'
+				sh 'npm installl'
 			}
 		}
-		stage('Test'){
-			steps{
-				script{
-					echo 'Testing...'
-					LAST_STAGE_NAME = env.STAGE_NAME
-					sh 'npm run test'
-				}
-			}
+		stage('Test') {
+			when {
+              			expression {currentBuild.result == null || currentBuild.result == 'SUCCESS'}
+            		}
+            		steps {
+                		echo 'Testing..'
+				sh 'npm test'
+            		}
 		}
+		stage('Deploy') {
+            		steps {
+                		echo 'Deploying....'
+            		}
+        }
 	}
 	post{
 		failure{
