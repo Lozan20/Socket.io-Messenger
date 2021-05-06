@@ -13,7 +13,7 @@ pipeline {
 				script{
 					echo 'Building...'
 					LAST_STAGE_NAME = env.STAGE_NAME
-					sh 'npm install'
+					sh 'npm installl'
 				}
 				
 			}
