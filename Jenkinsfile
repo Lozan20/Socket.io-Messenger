@@ -28,7 +28,7 @@ pipeline {
 	post{
 		failure{
 			emailext attachLog: true,
-				body: "Jenkins ${last_stage_name} ended with status: ${currentBuild.currentResult} of job ${env.JOB_NAME}",
+				body: "Jenkins ${env.STAGE_NAME} ended with status: ${currentBuild.currentResult} of job ${env.JOB_NAME}",
                 		to: 'szymonxlorenc@gmail.com',
 				subject: "${env.JOB_NAME} -> ${env.STAGE_NAME}: ${currentBuild.currentResult}"
 		}
