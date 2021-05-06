@@ -4,6 +4,13 @@ pipeline {
 	tools {nodejs "node" }
 
 	stages{
+		stage('Build'){
+			steps{
+				echo 'Building...'
+				sh 'printenv'
+				sh 'npm install'
+			}
+		}
 		stage('Test'){
 			steps{
 				echo 'Testing...'
