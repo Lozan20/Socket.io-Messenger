@@ -3,18 +3,22 @@ pipeline {
 	
 	tools {nodejs "node" }
 
+	environment { 
+        	LAST_STAGE_NAME = 'EMPTY'
+    	}
+	
 	stages{
 		stage('Build'){
 			steps{
 				echo 'Building...'
-				last_stage_name = env.STAGE_NAME
+				LAST_STAGE_NAME = env.STAGE_NAME
 				sh 'npm install'
 			}
 		}
 		stage('Test'){
 			steps{
 				echo 'Testing...'
-				last_stage_name = env.STAGE_NAME
+				LAST_STAGE_NAME = env.STAGE_NAME
 				sh 'npm run test'
 			}
 		}
