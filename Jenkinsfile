@@ -10,16 +10,21 @@ pipeline {
 	stages{
 		stage('Build'){
 			steps{
-				echo 'Building...'
-				LAST_STAGE_NAME = env.STAGE_NAME
-				sh 'npm install'
+				script{
+					echo 'Building...'
+					LAST_STAGE_NAME = env.STAGE_NAME
+					sh 'npm install'
+				}
+				
 			}
 		}
 		stage('Test'){
 			steps{
-				echo 'Testing...'
-				LAST_STAGE_NAME = env.STAGE_NAME
-				sh 'npm run test'
+				script{
+					echo 'Testing...'
+					LAST_STAGE_NAME = env.STAGE_NAME
+					sh 'npm run test'
+				}
 			}
 		}
 	}
