@@ -11,7 +11,7 @@ pipeline {
 		stage('Build') {
 			steps{
 				script{
-				env.LAST_STAGE_NAME = env.STAGE_NAME
+				withEnv([LAST_STAGE_NAME = env.STAGE_NAME")
 				}	
 				echo 'Building...'
 				sh 'npm installl'
@@ -23,7 +23,7 @@ pipeline {
             		}
             		steps {
 				script{
-				env.LAST_STAGE_NAME = env.STAGE_NAME
+				withEnv([LAST_STAGE_NAME = env.STAGE_NAME")
 				}
                 		echo 'Testing..'
 				sh 'npm test'
@@ -32,7 +32,7 @@ pipeline {
 		stage('Deploy') {
             		steps {
 				script{
-				env.LAST_STAGE_NAME = env.STAGE_NAME
+				withEnv([LAST_STAGE_NAME = env.STAGE_NAME")
 				}
                 		echo 'Deploying....'
             		}
