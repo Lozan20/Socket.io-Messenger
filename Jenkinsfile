@@ -3,10 +3,6 @@ pipeline {
 	
 	tools {nodejs "node" }
 
-	environment { 
-        	LAST_STAGE_NAME = 'EMPTY'
-    	}
-	
 	stages{
 		stage('Build'){
 			steps{
@@ -33,7 +29,7 @@ pipeline {
 			emailext attachLog: true,
 				body: "Jenkins ${last_stage_name} ended with status: ${currentBuild.currentResult} of job ${env.JOB_NAME}",
                 		to: 'szymonxlorenc@gmail.com',
-				subject: "${env.JOB_NAME} -> ${last_stage_name}: ${currentBuild.currentResult}"
+				subject: "${env.JOB_NAME} -> ${LAST_STAGE_NAME}: ${currentBuild.currentResult}"
 		}
 		success{
 			emailext attachLog: true,
