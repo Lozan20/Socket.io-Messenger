@@ -14,7 +14,7 @@ pipeline {
 				env.LAST_STAGE_NAME = env.STAGE_NAME
 				}	
 				echo 'Building...'
-				sh 'npm install'
+				sh 'npm installl'
 			}
 		}
 		stage('Test') {
