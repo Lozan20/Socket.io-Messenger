@@ -1,68 +1,44 @@
-pipeline{
+  pipeline {
 	agent any
-	tools {
-		nodejs "nodejs"
-	}
-	stages {
+	
+	tools {nodejs "nodejs" }
+	
+	stages{
 		stage('Build') {
-			steps {
-				echo 'Building'
-				sh 'git pull origin master'
+			steps{
+				echo 'Building...'
 				sh 'npm install'
-			}
-			post{
-				always{
-					echo 'Finished'
-				}
-				failure{
-					statusAllert('Build', 'Failure')
-				}
-				success{
-					statusAllert('Build', 'Success')
-				}
+				echo 'commit?'
 			}
 		}
 		stage('Test') {
-			steps {
-				echo 'Testing'
-				sh 'npm run test'
-			}
-			post{
-				always{
-					echo 'Finished'
-				}
-				failure{
-					statusAllert('Test', 'Failure')
-				}
-				success{
-					statusAllert('Test', 'Success')
-				}
-			}
+			when {
+              			expression {currentBuild.result == null || currentBuild.result == 'SUCCESS'}
+            		}
+            		steps {
+                		echo 'Testing..'
+				sh 'npm test'
+            		}
 		}
 		stage('Deploy') {
-            steps {
-                echo 'Deploy'
-                sh 'docker build -t socketio_deploy -f deploy_dockerfile_socketio .'
-            }
-            post {
-				always{
-					echo 'Finished'
-				}
-				failure{
-					statusAllert('Deploy', 'Failure')
-				}
-				success{
-					statusAllert('Deploy', 'Success')
-				}
-            }
-        }
+            		steps {
+                		echo 'Deploying....'
+				sh 'docker build -t socketio_deploy -f deploy_dockerfile_socketio .'
+            		}
+        	}
 	}
-}
-
-def statusAllert(stage, status) {
-	echo status
-	emailext attachLog: true,
-		body: "${currentBuild.currentResult}: Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}",
-		to: 'lozanskimichal@gmail.com',
-		subject: stage + status
+	post{
+		failure{
+			emailext attachLog: true,
+				body: "Jenkins ${env.JOB_NAME} ended with status: ${currentBuild.currentResult}",
+                		to: 'lozanskimichal@gmail.com',
+				subject: "${env.JOB_NAME}: ${currentBuild.currentResult}"
+		}
+		success{
+			emailext attachLog: true,
+                		body: "Jenkins builded and tested with status: ${currentBuild.currentResult} of job ${env.JOB_NAME}",
+                		to: 'lozanskimichal@gmail.com',
+				subject: "${env.JOB_NAME}: ${currentBuild.currentResult}"
+		}		
+	}
 }
