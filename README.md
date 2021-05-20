@@ -12,4 +12,4 @@ To get started:
 
 ## Testing 
 run tests with either `mocha` or `npm test`
-HOOKTEST
+HOOKTEST2
