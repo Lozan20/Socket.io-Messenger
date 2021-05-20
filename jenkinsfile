@@ -8,7 +8,6 @@
 			steps{
 				echo 'Building...'
 				sh 'npm install'
-				echo 'commit?'
 			}
 		}
 		stage('Test') {
