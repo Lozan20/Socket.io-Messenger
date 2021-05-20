@@ -23,7 +23,7 @@
 		stage('Deploy') {
             		steps {
                 		echo 'Deploying....'
-				sh 'docker build -f deploy_dockerfile_socketio .'
+				sh 'docker build -t socketio -f deploy_dockerfile_socketio .'
             		}
         	}
 	}
