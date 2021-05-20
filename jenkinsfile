@@ -1,44 +1,68 @@
-pipeline {
+pipeline{
 	agent any
-	
-	tools {nodejs "nodejs" }
-	
-	stages{
+	tools {
+		nodejs "node"
+	}
+	stages {
 		stage('Build') {
-			steps{
-				echo 'Building...'
+			steps {
+				echo 'Building'
+				sh 'git pull origin master'
 				sh 'npm install'
-				echo 'commit?'
+			}
+			post{
+				always{
+					echo 'Finished'
+				}
+				failure{
+					statusAllert('Build', 'Failure')
+				}
+				success{
+					statusAllert('Build', 'Success')
+				}
 			}
 		}
 		stage('Test') {
-			when {
-              			expression {currentBuild.result == null || currentBuild.result == 'SUCCESS'}
-            		}
-            		steps {
-                		echo 'Testing..'
-				sh 'npm test'
-            		}
+			steps {
+				echo 'Testing'
+				sh 'npm run test'
+			}
+			post{
+				always{
+					echo 'Finished'
+				}
+				failure{
+					statusAllert('Test', 'Failure')
+				}
+				success{
+					statusAllert('Test', 'Success')
+				}
+			}
 		}
 		stage('Deploy') {
-            		steps {
-                		echo 'Deploying....'
-				sh 'docker build -t socketio_deploy -f deploy_dockerfile_socketio .'
-            		}
-        	}
+            steps {
+                echo 'Deploy'
+                sh 'docker build -t socketio_deploy -f deploy_dockerfile_socketio .'
+            }
+            post {
+				always{
+					echo 'Finished'
+				}
+				failure{
+					statusAllert('Deploy', 'Failure')
+				}
+				success{
+					statusAllert('Deploy', 'Success')
+				}
+            }
+        }
 	}
-	post{
-		failure{
-			emailext attachLog: true,
-				body: "Jenkins ${env.JOB_NAME} ended with status: ${currentBuild.currentResult}",
-                		to: 'lozanskimichal@gmail.com',
-				subject: "${env.JOB_NAME}: ${currentBuild.currentResult}"
-		}
-		success{
-			emailext attachLog: true,
-                		body: "Jenkins builded and tested with status: ${currentBuild.currentResult} of job ${env.JOB_NAME}",
-                		to: 'lozanskimichal@gmail.com',
-				subject: "${env.JOB_NAME}: ${currentBuild.currentResult}"
-		}		
-	}
+}
+
+def statusAllert(stage, status) {
+	echo status
+	emailext attachLog: true,
+		body: "${currentBuild.currentResult}: Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}",
+		to: 'lozanskimichal@gmail.com',
+		subject: stage + status
 }
